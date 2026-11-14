@@ -3,105 +3,146 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Mondapp</title>
+<title>Monddapp</title>
 <link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#ff8a3d">
+<meta name="theme-color" content="#171a2e">
 <link rel="icon" href="icon-192.png">
 <link rel="apple-touch-icon" href="icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible+Next:wght@400;600;800&display=swap">
 <style>
 *{box-sizing:border-box;margin:0}
-html{font:20px/1.3 system-ui,sans-serif;color:#33261d;-webkit-tap-highlight-color:transparent}
-body{background:linear-gradient(#fff4e6,#ffdcb8) fixed;min-height:100dvh}
+:root{--ink:#171a2e;--mist:#eef0f6;--rec:#e5383b;--ok:#1e9e62;--sun:#ffb627}
+/* .hue: a kategória színei a --h színszögből */
+.hue{--tone:oklch(45% .13 var(--h));--deep:oklch(34% .11 var(--h));--tint:oklch(94% .035 var(--h))}
+html{font:19px/1.3 "Atkinson Hyperlegible Next",system-ui,sans-serif;color:var(--ink);-webkit-tap-highlight-color:transparent}
+body{background:var(--mist);min-height:100dvh;transition:background .3s}
+body.play{background:var(--tone)}
 [hidden]{display:none!important}
-.screen{max-width:520px;margin:auto;padding:12px;display:flex;flex-direction:column;gap:8px;min-height:100dvh}
-#home{gap:12px}
-button{font:inherit;font-weight:700;border:0;border-radius:20px;padding:12px;min-height:64px;background:#fff;color:inherit;box-shadow:0 4px 0 #0002;cursor:pointer;touch-action:manipulation}
-button:active{transform:translateY(3px);box-shadow:0 1px 0 #0002}
-.primary{background:#2fa862;color:#fff}
-.big{font-size:1.4rem;min-height:72px}
-progress{width:100%;height:18px;accent-color:#2fa862}
+.screen{max-width:520px;margin:auto;padding:14px;display:flex;flex-direction:column;gap:12px;min-height:100dvh}
+button{font:inherit;color:inherit;border:0;background:none;cursor:pointer;touch-action:manipulation}
+button:active{transform:scale(.97)}
+button:focus-visible{outline:3px solid var(--sun);outline-offset:3px}
+svg{width:1.3em;height:1.3em;fill:currentColor;flex:none}
 
-header{display:flex;justify-content:space-between;align-items:center}
-h1{font-size:1.8rem;color:#e8590c}
-h2{font-size:1.1rem;margin-top:8px}
-#streak{background:#fff;border-radius:99px;padding:8px 16px;font-weight:700}
+/* Főoldal */
+header{display:flex;justify-content:space-between;align-items:center;padding:6px 4px 0}
+h1{font-size:1.7rem;font-weight:800;letter-spacing:-.02em}
+h1 span{font-weight:400;opacity:.5}
+#streak{font-weight:600;background:#fff;border-radius:99px;padding:8px 14px}
+.daily{display:flex;align-items:center;gap:14px;text-align:left;background:var(--ink);color:#fff;border-radius:28px;padding:20px}
+.daily>span:first-child{flex:1;display:grid;gap:8px}
+.daily small{opacity:.7;font-size:.85rem}
+.daily b{font-size:1.5rem;font-weight:800}
+#pips{display:flex;gap:5px}
+#pips i{flex:1;height:8px;border-radius:9px;background:#fff3}
+#pips i.on{background:var(--sun)}
+.go{flex:none;width:68px;height:68px;border-radius:50%;background:#fff;color:var(--ink);display:grid;place-content:center;font-size:1.4rem}
+h2{font-size:.8rem;font-weight:600;letter-spacing:.07em;text-transform:uppercase;opacity:.6;margin:10px 4px 0}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.tile{background:var(--tone);color:#fff;border-radius:22px;padding:14px;text-align:left;display:grid;gap:4px;min-height:122px;align-content:space-between}
+.tile i{font-style:normal;font-size:1.9rem;line-height:1}
+.tile b{font-weight:800;font-size:1.05rem}
+.tile small{opacity:.8;font-size:.8rem}
+.bar{display:block;height:5px;border-radius:9px;background:#fff3;overflow:hidden}
+.bar span{display:block;height:100%;background:#fff}
+.quiet{background:#fff;border-radius:18px;padding:14px;text-align:left;font-size:.9rem;margin-top:10px}
 #warn{background:#fff3bf;border-radius:14px;padding:10px;font-size:.85rem}
-#levels{display:grid;gap:10px}
-.lvl{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:12px;text-align:left;border-left:12px solid var(--c)}
-.lvl i{font-style:normal;font-size:2rem}
-small{font-weight:400;opacity:.75}
 
+/* Gyakorló oldalak: a háttér a kategória színe, középen a szókártya */
+#ex,#look{color:#fff}
 .top{display:flex;gap:12px;align-items:center}
-.top button{min-height:48px;width:48px;padding:0;flex:none}
-.step{text-align:center;font-weight:700;color:#e8590c}
-.word{font-size:2.8rem;font-weight:800;text-align:center;white-space:pre-wrap}
-.word.long{font-size:1.8rem}
-#lookWord span{border-radius:8px;padding:0 2px;cursor:pointer}
+.icon{width:48px;height:48px;border-radius:50%;background:#fff2;font-size:1.1rem;flex:none}
+.ghost{opacity:.9;padding:12px 4px;font-size:.9rem;text-decoration:underline;text-underline-offset:3px}
+progress{flex:1;height:10px;appearance:none;border:0;border-radius:9px;overflow:hidden;background:#fff3}
+progress::-webkit-progress-bar{background:#fff3}
+progress::-webkit-progress-value{background:#fff;border-radius:9px}
+progress::-moz-progress-bar{background:#fff}
+.card{flex:1;min-height:0;background:#fff;color:var(--ink);border-radius:32px;padding:18px;display:flex;flex-direction:column;align-items:center;justify-content:space-between;gap:8px;text-align:center;box-shadow:0 10px 0 var(--deep);margin-bottom:10px}
+.word{font-size:clamp(2rem,13vw,3.4rem);font-weight:800;letter-spacing:-.01em;line-height:1.05;white-space:pre-wrap}
+.word.long{font-size:clamp(1.5rem,8vw,2.1rem)}
+#pic{font-size:min(30vw,22dvh,150px);line-height:1}
+#pic.num{font-family:system-ui,sans-serif;font-weight:800;color:var(--tone)}
+#cap{font-size:.85rem;min-height:1.3em;opacity:.85}
+#cap b{display:block;font-size:1.3rem}
+.acts{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
+.pill{display:inline-flex;align-items:center;gap:8px;font-weight:600;background:var(--tint);color:var(--deep);border-radius:99px;padding:12px 20px;min-height:54px}
+#msg{text-align:center;font-weight:600;min-height:2.6em;display:grid;place-content:center;padding:0 8px}
+.dock{position:relative;display:grid;place-content:center;padding-bottom:10px}
+#mic{width:104px;height:104px;border-radius:50%;background:#fff;color:var(--deep);display:grid;place-content:center;font-size:2.1rem;box-shadow:0 0 0 10px #fff3;position:relative}
+#mic.on{background:var(--rec);color:#fff}
+#mic.on::before,#mic.on::after{content:"";position:absolute;inset:0;border-radius:50%;border:3px solid #fff;animation:ring 1.6s ease-out infinite}
+#mic.on::after{animation-delay:.8s}
+#nextBtn{position:absolute;right:0;top:calc(50% - 5px);translate:0 -50%;background:#fff}
+.cta{background:#fff;color:var(--deep);font-weight:800;font-size:1.2rem;border-radius:99px;padding:18px 30px;min-height:68px}
+#demo,#cam{display:block;max-width:100%;max-height:36dvh;aspect-ratio:1;object-fit:cover;border-radius:22px;background:#222}
+#lookWord span{border-radius:8px;padding:0 2px}
 #lookWord span:active{background:#ffd43b}
-#demo,#cam{display:block;margin:auto;height:38dvh;max-width:100%;aspect-ratio:1;object-fit:cover;border-radius:24px;background:#222}
-#tip,.hint{text-align:center;font-size:.85rem;min-height:2.6em}
-.picRow{display:flex;justify-content:center;align-items:center;gap:12px;min-height:110px}
-#pic{font-size:90px;line-height:1}
-#pic.num{font-weight:800;color:#e8590c}
-#mirror{width:110px;height:110px;object-fit:cover;border-radius:24px;transform:scaleX(-1)}
+#tip{font-size:.85rem;min-height:2.6em}
+
+/* Siker, vége, felvevő */
+#star{position:fixed;inset:0;background:var(--ok);color:#fff;display:grid;place-content:center;justify-items:center;gap:14px;font-size:1.8rem;font-weight:800;animation:fade .2s}
+#star svg{width:120px;height:120px;animation:pop .45s}
+#done{justify-content:center;text-align:center;gap:18px}
+#done div{font-size:100px;line-height:1}
+.btn{background:#fff;border-radius:18px;padding:14px;font-weight:600;min-height:60px}
+.btn.main{background:var(--ink);color:#fff}
+.rec{background:var(--rec)!important;color:#fff}
+#rec .icon{background:#fff}
+#rec .card{box-shadow:none;margin:0}
 .row{display:grid;grid-auto-flow:column;grid-auto-columns:1fr;gap:10px}
-.row button{font-size:1.3rem;min-height:60px;padding:6px;display:flex;flex-direction:column;align-items:center;justify-content:center}
-.row span{font-size:.8rem}
-#mic{background:#ff8a3d;color:#fff}
-.rec{background:#e03131!important;color:#fff;animation:pulse 1s infinite}
-#msg{text-align:center;font-weight:700;min-height:1.4em}
-#star{position:fixed;inset:0;display:grid;place-content:center;text-align:center;background:#fff9;font-size:140px;animation:pop .5s}
-#star p{font-size:2rem;font-weight:800;color:#2fa862}
-#done{justify-content:center;text-align:center}
-#done div{font-size:110px}
-@keyframes pulse{50%{transform:scale(1.04)}}
-@keyframes pop{0%{transform:scale(.2);opacity:0}70%{transform:scale(1.15)}}
+.hint{font-size:.85rem;text-align:center}
+@keyframes ring{from{transform:scale(1);opacity:.8}to{transform:scale(1.7);opacity:0}}
+@keyframes pop{0%{transform:scale(.2);opacity:0}70%{transform:scale(1.12)}}
+@keyframes fade{from{opacity:0}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
 </head>
 <body>
 
 <main id="home" class="screen">
-  <header><h1>Mondapp</h1><div id="streak"></div></header>
-  <div><b id="dayTxt"></b><progress id="dayBar" value="0"></progress></div>
-  <button id="startBtn" class="big primary">▶ Mai gyakorlás</button>
-  <h2>Szintek</h2>
-  <div id="levels"></div>
-  <h2>Családtagnak</h2>
-  <button id="recBtn">🎥 Minta felvétele: valódi száj és hang<br><small id="recCount"></small></button>
-  <p id="warn" hidden>Ahol még nincs saját felvétel, a telefon gépi hangja szól — de ezen az eszközön nincs magyar gépi hang.</p>
+  <header><h1>Mondd<span>app</span></h1><div id="streak"></div></header>
+  <button id="startBtn" class="daily">
+    <span><small>Mai gyakorlás</small><b id="dayTxt"></b><span id="pips"></span></span>
+    <span class="go"><svg viewBox="0 0 24 24"><path d="M8 5.5v13l11-6.5-11-6.5Z"/></svg></span>
+  </button>
+  <p id="warn" hidden>Ezen az eszközön nincs magyar gépi hang, ezért a szavak nem hallhatók. Telefonon: Beállítások → Szövegfelolvasás → magyar nyelv letöltése.</p>
+  <div id="groups"></div>
+  <button id="recBtn" class="quiet"><b>Családtagnak:</b> minta felvétele valódi szájjal és hanggal · <span id="recCount"></span></button>
 </main>
 
-<!-- 1. oldal: valódi száj videón — hogyan kell kimondani -->
+<!-- Valódi száj videón (csak ahol már van saját felvétel) -->
 <main id="look" class="screen" hidden>
-  <div class="top"><button class="quit" aria-label="Kilépés">✕</button><progress class="prog" value="0"></progress></div>
-  <p class="step">1. Nézd a szájat!</p>
-  <video id="demo" playsinline></video>
-  <div id="lookWord" class="word"></div>
-  <p id="tip"></p>
-  <div class="row">
-    <button id="again">▶<span>Újra</span></button>
-    <button id="slowBtn">🐢<span>Lassan</span></button>
-  </div>
-  <button id="toSay" class="big primary">Most te mondd ➡</button>
+  <div class="top"><button class="quit icon" aria-label="Kilépés">✕</button><progress class="prog" value="0"></progress></div>
+  <section class="card">
+    <div id="lookWord" class="word"></div>
+    <video id="demo" playsinline></video>
+    <p id="tip"></p>
+    <div class="acts">
+      <button id="again" class="pill"><svg viewBox="0 0 24 24"><path d="M8 5.5v13l11-6.5-11-6.5Z"/></svg>Újra</button>
+      <button id="slowBtn" class="pill">🐢 Lassan</button>
+    </div>
+  </section>
+  <div class="dock"><button id="toSay" class="cta">Most te mondd</button></div>
 </main>
 
-<!-- 2. oldal: hallgasd és mondd utána -->
+<!-- Hallgasd, és mondd utána -->
 <main id="ex" class="screen" hidden>
-  <div class="top"><button class="quit" aria-label="Kilépés">✕</button><progress class="prog" value="0"></progress></div>
-  <p class="step">2. Hallgasd, és mondd utána!</p>
-  <div class="picRow"><div id="pic"></div><video id="mirror" hidden playsinline muted></video></div>
-  <div id="word" class="word"></div>
-  <div class="row">
-    <button id="hear">🔊<span>Hallgasd</span></button>
-    <button id="lookBtn">👄<span>Nézd újra</span></button>
-    <button id="mirrorBtn">🪞<span>Tükör</span></button>
-  </div>
-  <button id="mic" class="big">🎤 Most te mondd!</button>
-  <p id="msg"></p>
-  <div class="row">
-    <button id="skip">⏭<span>Később</span></button>
-    <button id="ok" class="primary">👍<span>Sikerült</span></button>
+  <div class="top"><button class="quit icon" aria-label="Kilépés">✕</button><progress class="prog" value="0"></progress><button id="skip" class="ghost">Kihagyom</button></div>
+  <section class="card">
+    <div id="word" class="word"></div>
+    <div id="pic"></div>
+    <p id="cap"></p>
+    <div class="acts">
+      <button id="hear" class="pill"><svg viewBox="0 0 24 24"><path d="M4 9.5v5h3.5L12 18.5v-13L7.5 9.5H4Z"/><path d="M15.5 9a4 4 0 0 1 0 6M18 6.5a7.5 7.5 0 0 1 0 11" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>Hallgasd</button>
+      <button id="lookBtn" class="pill">Nézd a szájat</button>
+    </div>
+  </section>
+  <p id="msg" role="status"></p>
+  <div class="dock">
+    <button id="mic" aria-label="Mikrofon"><svg viewBox="0 0 24 24"><path d="M12 15a3.5 3.5 0 0 0 3.5-3.5v-6a3.5 3.5 0 0 0-7 0v6A3.5 3.5 0 0 0 12 15Z"/><path d="M5.5 11.5a6.5 6.5 0 0 0 13 0M12 18v3.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
+    <button id="nextBtn" class="pill" hidden>Tovább</button>
   </div>
 </main>
 
@@ -109,87 +150,41 @@ small{font-weight:400;opacity:.75}
   <div>🎉</div>
   <h1>Szép munka!</h1>
   <p id="doneTxt"></p>
-  <button id="homeBtn" class="big primary">Vissza</button>
+  <button id="homeBtn" class="btn main">Vissza a főoldalra</button>
 </main>
 
 <!-- Felvevő: egy családtag veszi fel a mintákat (videó + hang), a telefonon maradnak -->
 <main id="rec" class="screen" hidden>
-  <div class="top"><button class="quit" aria-label="Kilépés">✕</button><b id="recPos"></b></div>
+  <div class="top"><button class="quit icon" aria-label="Kilépés">✕</button><b id="recPos"></b></div>
   <p id="recHint" class="hint">Tartsd közel a telefont: a szád töltse ki a képet. Mondd lassan, tisztán:</p>
-  <video id="cam" playsinline muted></video>
-  <div id="recWord" class="word"></div>
-  <button id="recGo" class="big">⏺ Felvétel</button>
+  <section class="card">
+    <video id="cam" playsinline muted></video>
+    <div id="recWord" class="word"></div>
+  </section>
+  <button id="recGo" class="btn main">⏺ Felvétel</button>
   <div class="row">
-    <button id="recPrev">⬅<span>Előző</span></button>
-    <button id="recNext" class="primary">➡<span>Következő</span></button>
+    <button id="recPrev" class="btn">Előző</button>
+    <button id="recNext" class="btn">Következő</button>
   </div>
 </main>
 
-<div id="star" hidden>⭐<p></p></div>
+<div id="star" hidden><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#fff"/><path d="M7 12.5l3.5 3.5 6.5-7.5" fill="none" stroke="#1e9e62" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg><p></p></div>
 <audio id="aud"></audio>
 
+<script src="words.js"></script>
 <script>
 const $ = id => document.getElementById(id);
 const GOAL = 10;      // napi cél: ennyi sikeres gyakorlat
 const MASTER = 3;     // ennyi siker után "megvan" egy elem
-
-// ---------- Tananyag ----------
-const L = (icon, name, check, items) => ({icon, name, items: items.map(i => typeof i === 'string' ? {t: i, check} : {t: i[0], e: i[1], check})});
-const LEVELS = [
-  L('🔤', 'Magánhangzók', 0, ['a','á','e','é','i','o','ö','u','ü']),
-  L('👄', 'M · P · B', 0, ['ma','mi','mu','pa','pi','po','ba','be','bu',['mama','👵'],['papa','👴'],['baba','👶']]),
-  L('👅', 'T · D · N · L', 0, ['ta','te','da','do','na','ne','la','le','li','lu',['tó','🏞️'],['ló','🐴']]),
-  L('🗣️', 'K · G · H', 0, ['ka','ko','ku','ga','go','ha','he',['kő','🪨'],['hó','❄️'],['kép','🖼️']]),
-  L('🌬️', 'F · V · SZ · S', 0, ['fi','va','vi','sza','szi','sa','so',['fa','🌳'],['só','🧂'],['szó','💬']]),
-  L('🏠', 'Otthon', 1, [['víz','💧'],['tea','🍵'],['kávé','☕'],['kenyér','🍞'],['alma','🍎'],['tej','🥛'],['leves','🍲'],['ágy','🛏️'],['szék','🪑'],['ajtó','🚪'],['ház','🏠'],['telefon','📱'],['óra','⏰'],['kulcs','🔑'],['lámpa','💡']]),
-  L('🧍', 'Család és test', 1, [['anya','👩'],['apa','👨'],['fiú','👦'],['lány','👧'],['kéz','✋'],['láb','🦵'],['szem','👁️'],['fül','👂'],['orr','👃'],['száj','👄'],['fog','🦷'],['szív','❤️']]),
-  L('🐾', 'Állatok', 1, [['kutya','🐶'],['macska','🐱'],['madár','🐦'],['hal','🐟'],['tehén','🐮'],['malac','🐷'],['tyúk','🐔'],['nyúl','🐰'],['méh','🐝']]),
-  L('💬', 'Fontos szavak', 1, [['igen','✅'],['nem','❌'],['jó','👍'],['kérek','🙏'],['köszönöm','💐'],['szia','👋'],['fáj','🤕'],['éhes','🍽️'],['szomjas','🥤'],['fáradt','😴'],['segíts','🆘'],['vécé','🚽']]),
-  L('🔢', 'Számok', 1, [['egy','1'],['kettő','2'],['három','3'],['négy','4'],['öt','5'],['hat','6'],['hét','7'],['nyolc','8'],['kilenc','9'],['tíz','10']]),
-  L('📝', 'Mondatok', 1, [['Jó reggelt!','🌅'],['Kérek vizet.','💧'],['Éhes vagyok.','🍽️'],['Szomjas vagyok.','🥤'],['Fáradt vagyok.','😴'],['Fáj a fejem.','🤕'],['Köszönöm szépen.','💐'],['Hogy vagy?','🙂'],['Jól vagyok.','👍'],['Szeretlek.','❤️'],['Jó éjszakát!','🌙']]),
-];
-const ALL = [...new Map(LEVELS.flatMap(l => l.items).map(i => [i.t, i])).values()];   // minden elem egyszer, sorrendben
+const DAILY = {letter: 2, syll: 1, word: 6, sent: 1};   // a mai adag összetétele
 const PRAISE = ['Nagyon jó!', 'Szép volt!', 'Ez az!', 'Pontosan!', 'Ügyes!'];
 
-// ---------- Tanácsok hangonként: hova kerül a nyelv, az ajak ----------
-const TIP = {
-  a: 'Nyisd ki a szád, az ajkad legyen kicsit kerek.',
-  á: 'Nyisd nagyra a szád.',
-  e: 'Nyitott, széles száj.',
-  é: 'Mosolyogj, a szád félig nyitva.',
-  i: 'Széles mosoly, kicsi rés.',
-  o: 'Kerekítsd az ajkad, mint egy karika.',
-  ö: 'Kerek ajkak, a nyelved elöl.',
-  u: 'Csücsöríts, kicsi kerek nyílás.',
-  ü: 'Csücsöríts, a nyelved elöl.',
-  m: 'Zárd össze az ajkad, és zümmögj: mmm.',
-  p: 'Zárd össze az ajkad, aztán pattintsd szét.',
-  b: 'Zárd össze az ajkad, aztán nyisd szét hanggal.',
-  f: 'A felső fogad az alsó ajkadon. Fújj!',
-  v: 'A felső fogad az alsó ajkadon. Zümmögj!',
-  t: 'A nyelved hegye fent, a felső fogak mögött. Pattintsd le!',
-  d: 'A nyelved hegye fent, a felső fogak mögött. Hanggal engedd le!',
-  n: 'A nyelved hegye fent marad. A hang az orrodon jön: nnn.',
-  l: 'A nyelved hegye fent, a felső fogak mögött. A hang kétoldalt jön ki: lll.',
-  r: 'A nyelved hegye fent, pergesd: rrr.',
-  k: 'A nyelved hegye lent, a hátulja fent. Mint egy kis köhintés: k.',
-  g: 'A nyelved hegye lent, a hátulja fent. Hanggal: g.',
-  h: 'Nyitott száj. Lehelj, mint a tükörre: hhh.',
-  sz: 'Fogak összezárva, mosolyogj, sziszegj: ssz.',
-  z: 'Fogak összezárva, mosolyogj, zümmögj: zzz.',
-  c: 'Fogak összezárva. Gyors t, aztán sz: c.',
-  s: 'Csücsöríts, fogak közel. Csitíts: sss.',
-  zs: 'Csücsöríts, fogak közel. Zümmögj: zzs.',
-  cs: 'Csücsöríts. Gyors t, aztán s: cs.',
-  j: 'Mosolygó száj, a nyelved közepe fent: jjj.',
-  ny: 'A nyelved közepe a szájpadláson. A hang az orrodon jön: nny.',
-  gy: 'A nyelved közepe a szájpadlásra tapad, aztán elenged: gy.',
-  ty: 'A nyelved közepe a szájpadlásra tapad, aztán elpattan: ty.',
-};
-const ALIAS = {í:'i', ó:'o', ő:'ö', ú:'u', ű:'ü', ly:'j', dz:'c', dzs:'cs', w:'v', q:'k', x:'k', y:'i'};
+const CATS = GROUPS.flatMap(g => g.cats);
+for (const c of CATS) for (const i of c.items) i.cat = c;
+const ALL = CATS.flatMap(c => c.items);
+
 const VOW = 'aáeéiíoóöőuúüű';
 const DI = ['dzs','cs','dz','gy','ly','ny','sz','ty','zs'];
-
 // ponytail: mohó kétjegyű-felismerés; kivétellista, ha rosszul bontott szó kerül a tananyagba
 function units(w) {
   const lw = w.toLowerCase(), out = [];
@@ -197,7 +192,9 @@ function units(w) {
   return out;
 }
 const tipOf = u => { const k = u.toLowerCase(), t = TIP[ALIAS[k] || k]; return t ? k.toUpperCase() + ': ' + t : ''; };
-const norm = s => s.toLowerCase().replace(/[^a-záéíóöőúüű0-9 ]/g, '').trim();
+const norm = s => s.toLowerCase().replace(/[^a-záéíóöőúüű0-9]+/g, ' ').trim();
+// Jó a kimondás, ha a felismert szövegben egész szóként szerepel a cél (számoknál számjegyként is).
+const matches = (item, heard) => { const h = ` ${norm(heard)} `; return [item.t, /^\d+$/.test(item.e) && item.e].some(w => w && h.includes(` ${norm(w)} `)); };
 
 // ---------- Mentett haladás ----------
 const today = () => new Date().toLocaleDateString('sv');
@@ -207,7 +204,7 @@ S.ok ??= {};
 if (S.day !== today()) { S.day = today(); S.n = 0; }
 const save = () => localStorage.mondapp = JSON.stringify(S);
 const streak = () => (S.last === today() || S.last === yesterday()) ? S.streak || 0 : 0;
-const got = i => S.ok[i.t] || 0;
+const got = i => S.ok[i.id] || 0;
 
 // ---------- Saját felvételek tára (a telefonon marad) ----------
 // ponytail: eszközönként külön tár; export/import vagy közös tárhely, ha több telefonra kell ugyanaz
@@ -215,21 +212,24 @@ const db = new Promise((res, rej) => { const r = indexedDB.open('mondapp', 1); r
 const idb = (mode, fn) => db.then(d => new Promise((res, rej) => { const q = fn(d.transaction('vid', mode).objectStore('vid')); q.onsuccess = () => res(q.result); q.onerror = () => rej(q.error); }));
 let have = new Set();
 
-// ---------- Hang ----------
-// Ahol nincs saját felvétel, tartalékként a telefon gépi hangja szól.
-let voice;
+// ---------- Hang: saját felvétel, ennek híján a telefon gépi hangja ----------
+let voice, url, playTok = 0, talking = false;
 const pickVoice = () => { const vs = speechSynthesis.getVoices(); voice = vs.find(v => v.lang.replace('_', '-').startsWith('hu')); $('warn').hidden = !vs.length || !!voice; };
 if (window.speechSynthesis) { pickVoice(); speechSynthesis.onvoiceschanged = pickVoice; }
-function say(text) {
-  if (!window.speechSynthesis) return;
+const say = text => new Promise(res => {
+  if (!window.speechSynthesis) return res();
   const u = new SpeechSynthesisUtterance(text); u.lang = 'hu-HU'; u.rate = .8; if (voice) u.voice = voice;
+  u.onend = u.onerror = res; setTimeout(res, 2500 + 150 * text.length);   // ha a telefon nem jelzi a végét
   speechSynthesis.speak(u);
-}
-const hush = () => { window.speechSynthesis?.cancel(); $('aud').pause(); $('demo').pause(); };
-function listen() {
-  hush();
-  if (!url) return say(cur.t);
-  const a = $('aud'); if (a.src !== url) a.src = url; a.currentTime = 0; a.play().catch(() => {});
+});
+const playClip = () => new Promise(res => { const a = $('aud'); if (a.src !== url) a.src = url; a.currentTime = 0; a.onended = a.onerror = a.onpause = res; a.play().catch(res); });
+function hush() { playTok++; talking = false; window.speechSynthesis?.cancel(); $('aud').pause(); $('demo').pause(); }
+// Felmondja az aktuális elemet; közben a mikrofon szünetel, hogy az app ne a saját hangját "ismerje fel".
+async function prompt() {
+  hush(); const tok = playTok; talking = true; recog?.abort();
+  await (url ? playClip() : say(cur.cap ? `${cur.t}. ${cur.cap}` : cur.t));
+  if (tok !== playTok) return;
+  talking = false; listenLoop();
 }
 function look(rate = 1) {
   if ($('look').hidden) show('look');
@@ -238,87 +238,112 @@ function look(rate = 1) {
 }
 
 // ---------- Mikrofon ----------
-const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-const msg = t => $('msg').textContent = t;
-function recognize() {
-  const r = new SR(), want = [norm(cur.t)]; if (/^\d+$/.test(cur.e)) want.push(cur.e);
-  let hit = false;
-  r.lang = 'hu-HU'; r.maxAlternatives = 5;
-  r.onresult = e => hit = [...e.results[0]].some(a => want.some(w => norm(a.transcript).includes(w)));
-  r.onerror = e => e.error === 'not-allowed' && msg('Engedélyezd a mikrofont!');
-  r.onend = () => { $('mic').classList.remove('rec'); hit ? success() : $('msg').textContent || msg('Nem értettem tisztán. Próbáld újra! 🎤'); };
-  $('mic').classList.add('rec'); msg(''); r.start();
+// Szavak, mondatok: beszédfelismerés dönt, és addig hallgat, amíg jól el nem hangzik.
+// Betűk, szótagok (és ha nincs felismerő): ezt a telefon nem tudja megítélni — felvesz, visszajátszik, a Tovább gomb enged tovább.
+const hasSR = () => window.SpeechRecognition || window.webkitSpeechRecognition;
+let judge = false, micOn = false, recog = null, micT0 = 0, busy = false;
+const status = text => $('msg').textContent = text ?? (micOn ? 'Hallgatlak… mondd ki!' : judge ? 'Nyomd meg a mikrofont, és mondd ki!' : 'Nyomd meg a mikrofont, és mondd utána!');
+function setMic(on, text) { micOn = on; $('mic').classList.toggle('on', on); if (!on) recog?.abort(); status(text); }
+function listenLoop() {
+  if (!micOn || recog || talking || busy || $('ex').hidden) return;
+  if (Date.now() - micT0 > 120000) return setMic(false, 'Pihenj egyet. Ha mehet, nyomd meg újra a mikrofont.');
+  const r = recog = new (hasSR())(), item = cur; let hit = false;
+  r.lang = 'hu-HU'; r.interimResults = true; r.maxAlternatives = 5;
+  r.onresult = e => {
+    let last = '';
+    for (let i = 0; i < e.results.length; i++) for (let j = 0; j < e.results[i].length; j++) { last = e.results[i][j].transcript; if (matches(item, last)) hit = true; }
+    if (hit) r.abort(); else if (item === cur && last.trim()) status(`Ezt hallottam: „${e.results[e.results.length - 1][0].transcript.trim()}”. Próbáld újra!`);
+  };
+  r.onerror = e => {
+    if (e.error === 'not-allowed' || e.error === 'service-not-allowed') setMic(false, 'Engedélyezd a mikrofont a böngészőben!');
+    else if (e.error === 'network') setMic(false, 'A felismeréshez internet kell.');
+  };
+  r.onend = () => { recog = null; if (hit && item === cur && !busy) return success(); setTimeout(listenLoop, 300); };
+  try { r.start(); } catch { recog = null; }
 }
-// Felvétel + visszajátszás (hangoknál, szótagoknál, és ahol nincs beszédfelismerés)
 async function record() {
   try {
-    const st = await navigator.mediaDevices.getUserMedia({audio: true}), mr = new MediaRecorder(st), parts = [];
+    const st = await navigator.mediaDevices.getUserMedia({audio: true}), mr = new MediaRecorder(st), parts = [], item = cur;
     mr.ondataavailable = e => parts.push(e.data);
     mr.onstop = () => {
-      st.getTracks().forEach(t => t.stop()); $('mic').classList.remove('rec');
+      st.getTracks().forEach(t => t.stop()); $('mic').classList.remove('on');
+      if (item !== cur || $('ex').hidden) return;
       new Audio(URL.createObjectURL(new Blob(parts, {type: mr.mimeType}))).play().catch(() => {});
-      msg('Így mondtad. Jó volt? 👍');
+      status('Így mondtad. Ha jó volt: Tovább. Ha nem: próbáld újra.'); $('nextBtn').hidden = false;
     };
-    $('mic').classList.add('rec'); msg('Hallgatlak…'); mr.start();
-    setTimeout(() => mr.stop(), 2500 + 250 * U.length);
-  } catch { msg('A mikrofon nem érhető el.'); }
+    hush(); $('mic').classList.add('on'); status('Hallgatlak… mondd ki!'); mr.start();
+    setTimeout(() => mr.state === 'recording' && mr.stop(), 3000);
+  } catch { status('A mikrofon nem érhető el. Engedélyezd a böngészőben!'); }
 }
-let cam;
-function stopCam() { cam?.getTracks().forEach(t => t.stop()); cam = null; $('mirror').hidden = true; }
-async function mirror() {
-  if (cam) return stopCam();
-  try { cam = await navigator.mediaDevices.getUserMedia({video: {facingMode: 'user'}}); const v = $('mirror'); v.srcObject = cam; v.hidden = false; v.play(); }
-  catch { msg('A kamera nem érhető el.'); }
+function micTap() {
+  if (!judge) { if (!$('mic').classList.contains('on')) record(); return; }
+  if (micOn) return setMic(false);
+  hush(); micT0 = Date.now(); setMic(true); listenLoop();
 }
 
-// ---------- Gyakorlás menete: 1. Nézd (ha van felvétel)  2. Mondd ----------
-let queue = [], idx = 0, good = 0, cur, U = [], url;
-function show(id) { hush(); stopCam(); stopStudio(); for (const s of ['home', 'look', 'ex', 'done', 'rec']) $(s).hidden = s !== id; scrollTo(0, 0); }
+// ---------- Gyakorlás menete ----------
+let queue = [], idx = 0, good = 0, cur;
+function show(id) {
+  hush(); stopStudio(); recog?.abort();
+  const play = id === 'ex' || id === 'look';
+  if (!play) setMic(false);
+  document.body.className = play ? 'hue play' : '';
+  for (const s of ['home', 'look', 'ex', 'done', 'rec']) $(s).hidden = s !== id;
+  scrollTo(0, 0);
+}
 function start(items) { queue = items; idx = good = 0; next(); }
 async function next() {
   if (idx >= queue.length) return finish();
-  cur = queue[idx]; U = units(cur.t);
+  cur = queue[idx]; busy = false;
+  const kind = cur.cat.kind, text = cur.show || cur.t, cls = text.length > 9 ? 'word long' : 'word';
+  judge = (kind === 'word' || kind === 'sent') && !!hasSR();
+  document.body.style.setProperty('--h', cur.cat.hue);
   if (url) URL.revokeObjectURL(url);
-  url = have.has(cur.t) ? URL.createObjectURL(await idb('readonly', s => s.get(cur.t))) : null;
+  url = have.has(cur.id) ? URL.createObjectURL(await idb('readonly', s => s.get(cur.id))) : null;
   for (const p of document.querySelectorAll('.prog')) { p.max = queue.length; p.value = idx; }
-  const cls = cur.t.length > 9 ? 'word long' : 'word';
+  $('word').textContent = text; $('word').className = cls;
   $('pic').textContent = cur.e || ''; $('pic').className = /^\d+$/.test(cur.e) ? 'num' : '';
-  $('word').textContent = cur.t; $('word').className = cls;
+  const cap = $('cap'); cap.textContent = '';
+  if (cur.cap) { const b = document.createElement('b'); b.textContent = cur.cap; cap.append(b); }
+  cap.append(kind === 'letter' ? tipOf(cur.t) : kind === 'syll' ? tipOf(units(cur.t).find(u => !VOW.includes(u)) || cur.t) : '');
   const lw = $('lookWord'); lw.textContent = ''; lw.className = cls;
-  U.forEach(u => { const s = document.createElement('span'); s.textContent = u; s.onclick = () => { const t = tipOf(u); if (t) $('tip').textContent = t; }; lw.append(s); });
-  $('tip').textContent = cur.check ? 'Koppints egy betűre: elmondom, hova tedd a nyelved.' : tipOf(U.find(u => !VOW.includes(u.toLowerCase())) || U[0]);
-  $('lookBtn').hidden = !url; msg('');
-  if (url) look(); else { show('ex'); listen(); }
+  units(text).forEach(u => { const s = document.createElement('span'); s.textContent = u; s.onclick = () => { const t = tipOf(u); if (t) $('tip').textContent = t; }; lw.append(s); });
+  $('tip').textContent = 'Koppints egy betűre: elmondom, hova tedd a nyelved.';
+  $('lookBtn').hidden = !url; $('nextBtn').hidden = true; status();
+  if (url) look(); else { show('ex'); prompt(); }
 }
 function success() {
-  S.ok[cur.t] = got(cur) + 1; S.n++; good++;
+  busy = true; micT0 = Date.now();
+  S.ok[cur.id] = got(cur) + 1; S.n++; good++;
   if (S.n >= GOAL && S.last !== today()) { S.streak = streak() + 1; S.last = today(); }
   save(); hush();
   $('star').lastChild.textContent = PRAISE[Math.random() * PRAISE.length | 0]; $('star').hidden = false;
   setTimeout(() => { $('star').hidden = true; idx++; next(); }, 1200);
 }
 function finish() {
-  $('doneTxt').textContent = `Sikerült: ${good} / ${queue.length}. ` + (S.n >= GOAL ? `Napi cél kész! 🔥 ${streak()} nap egymás után.` : `Ma eddig: ${S.n} / ${GOAL}.`);
+  $('doneTxt').textContent = `Sikerült: ${good} / ${queue.length}. ` + (S.n >= GOAL ? `Mai cél kész! 🔥 ${streak()} nap egymás után.` : `Ma eddig: ${S.n} / ${GOAL}.`);
   show('done');
 }
-// Mai adag: az első 10 elem, ami még nincs meg (sorban, könnyűtől nehézig) — naponta ugyanazok ismétlődnek, amíg be nem gyakorlódnak.
-function daily() {
-  const todo = ALL.filter(i => got(i) < MASTER);
-  return [...new Set([...todo, ...[...ALL].sort(() => Math.random() - .5)])].slice(0, GOAL);
-}
+// Egy adag: a még be nem gyakorolt elemek sorban; naponta ugyanazok jönnek, amíg háromszor nem sikerültek.
+const pickFrom = (items, n = GOAL) => { const todo = items.filter(i => got(i) < MASTER); return (todo.length ? todo : items).slice(0, n); };
+const daily = () => Object.entries(DAILY).flatMap(([k, n]) => pickFrom(ALL.filter(i => i.cat.kind === k), n));
 function home() {
   $('streak').textContent = `🔥 ${streak()} nap`;
-  $('dayTxt').textContent = `Ma: ${Math.min(S.n, GOAL)} / ${GOAL}` + (S.n >= GOAL ? ' ✅' : '');
-  $('dayBar').max = GOAL; $('dayBar').value = Math.min(S.n, GOAL);
-  $('recCount').textContent = `${ALL.filter(i => have.has(i.t)).length} / ${ALL.length} kész`;
-  $('levels').textContent = '';
-  LEVELS.forEach((l, i) => {
-    const b = document.createElement('button'); b.className = 'lvl'; b.style.setProperty('--c', `hsl(${i * 33 + 15} 85% 58%)`);
-    const done = l.items.filter(x => got(x) >= MASTER).length;
-    b.innerHTML = `<i>${l.icon}</i><span>${l.name}<br><small>${done} / ${l.items.length} megvan</small></span><span>${done === l.items.length ? '⭐' : '▶'}</span>`;
-    b.onclick = () => start(l.items);
-    $('levels').append(b);
-  });
+  $('dayTxt').textContent = S.n >= GOAL ? 'Mai cél kész' : `${S.n} / ${GOAL}`;
+  $('pips').innerHTML = Array.from({length: GOAL}, (_, i) => `<i${i < S.n ? ' class="on"' : ''}></i>`).join('');
+  $('recCount').textContent = `${ALL.filter(i => have.has(i.id)).length} / ${ALL.length} kész`;
+  $('groups').textContent = '';
+  for (const g of GROUPS) {
+    const h = document.createElement('h2'), grid = document.createElement('div'); h.textContent = g.title; grid.className = 'grid';
+    for (const c of g.cats) {
+      const done = c.items.filter(x => got(x) >= MASTER).length, b = document.createElement('button');
+      b.className = 'tile hue'; b.style.setProperty('--h', c.hue);
+      b.innerHTML = `<i>${c.icon}</i><b>${c.name}</b><small>${done} / ${c.items.length}</small><span class="bar"><span style="width:${100 * done / c.items.length}%"></span></span>`;
+      b.onclick = () => start(pickFrom(c.items));
+      grid.append(b);
+    }
+    $('groups').append(h, grid);
+  }
   show('home');
 }
 
@@ -330,7 +355,7 @@ function stopStudio() {
   $('cam').srcObject = null; $('recGo').classList.remove('rec');
 }
 async function studio() {
-  show('rec'); ri = Math.max(0, ALL.findIndex(i => !have.has(i.t)));
+  show('rec'); ri = Math.max(0, ALL.findIndex(i => !have.has(i.id)));
   try { rstream = await navigator.mediaDevices.getUserMedia({video: {facingMode: 'user', width: 480, height: 480}, audio: true}); }
   catch { $('recHint').textContent = 'A kamera vagy a mikrofon nem érhető el. Engedélyezd a böngészőben!'; }
   recShow();
@@ -340,9 +365,9 @@ function live() {
   v.removeAttribute('src'); v.onended = null; v.srcObject = rstream; v.muted = true; v.play().catch(() => {});
 }
 function recShow() {
-  const it = ALL[ri], has = have.has(it.t);
-  $('recWord').textContent = it.t; $('recWord').className = it.t.length > 9 ? 'word long' : 'word';
-  $('recPos').textContent = `${ri + 1} / ${ALL.length}` + (has ? ' · ✔ megvan' : ' · még nincs');
+  const it = ALL[ri], has = have.has(it.id), text = it.show || it.t;
+  $('recWord').textContent = text; $('recWord').className = text.length > 9 ? 'word long' : 'word';
+  $('recPos').textContent = `${ri + 1} / ${ALL.length} · ${it.cat.name}` + (has ? ' · ✔ megvan' : '');
   $('recGo').textContent = has ? '⏺ Újra felveszem' : '⏺ Felvétel';
   live();
 }
@@ -354,7 +379,7 @@ function recToggle() {
   r.onstop = async () => {
     clearTimeout(rt); rec = null; $('recGo').classList.remove('rec');
     const blob = new Blob(parts, {type: r.mimeType});
-    await idb('readwrite', s => s.put(blob, it.t)); have.add(it.t); navigator.storage?.persist?.();
+    await idb('readwrite', s => s.put(blob, it.id)); have.add(it.id); navigator.storage?.persist?.();
     recShow();
     const v = $('cam'); v.srcObject = null; v.src = URL.createObjectURL(blob); v.muted = false; v.onended = live; v.play().catch(() => {});   // visszanézés
   };
@@ -368,12 +393,11 @@ for (const b of document.querySelectorAll('.quit')) b.onclick = home;
 $('homeBtn').onclick = home;
 $('again').onclick = () => look();
 $('slowBtn').onclick = () => look(.5);
-$('toSay').onclick = () => show('ex');
-$('hear').onclick = listen;
+$('toSay').onclick = () => { show('ex'); listenLoop(); };
+$('hear').onclick = prompt;
 $('lookBtn').onclick = () => look();
-$('mirrorBtn').onclick = mirror;
-$('mic').onclick = () => { if ($('mic').classList.contains('rec')) return; hush(); cur.check && SR ? recognize() : record(); };
-$('ok').onclick = success;
+$('mic').onclick = micTap;
+$('nextBtn').onclick = success;
 $('skip').onclick = () => { idx++; next(); };
 $('recBtn').onclick = studio;
 $('recGo').onclick = recToggle;
@@ -389,9 +413,12 @@ if (location.hash === '#test') {
   eq(units('Jó reggelt!'), ['J','ó',' ','r','e','g','g','e','l','t','!']);
   eq(units('macska'), ['m','a','cs','k','a']); eq(units('kenyér'), ['k','e','ny','é','r']);
   console.assert(tipOf('Ó').startsWith('Ó: Kerekítsd') && tipOf('!') === '');
-  console.assert(norm('Jó reggelt!') === 'jó reggelt');
-  console.assert(ALL.length === new Set(ALL.map(i => i.t)).size);
-  console.log('önellenőrzés kész', ALL.length);
+  console.assert(matches({t: 'hal'}, 'Egy hal.') && !matches({t: 'hal'}, 'halló'), 'egész szó');
+  console.assert(matches({t: 'három', e: '3'}, '3') && matches({t: 'Jó reggelt!'}, 'jó reggelt') && !matches({t: 'alma', e: '🍎'}, 'alba'), 'egyezés');
+  console.assert(new Set(ALL.map(i => i.id)).size === ALL.length, 'ismétlődő szó');
+  const words = ALL.filter(i => i.cat.kind === 'word');
+  console.assert(words.length >= 500 && daily().length === GOAL, 'szószám, napi adag');
+  console.log('önellenőrzés kész:', words.length, 'szó,', ALL.length, 'elem,', words.filter(i => !i.e).length, 'szónak nincs képe');
 }
 </script>
 </body>
