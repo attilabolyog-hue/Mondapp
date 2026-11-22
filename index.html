@@ -85,11 +85,12 @@ progress::-moz-progress-bar{background:#fff}
 #lookWord:not(.long){font-size:clamp(1.8rem,10vw,2.5rem)}
 /* az ábra kitölti, ami a szöveg és a gombok után marad */
 #artic{width:100%;--artic-h:max(160px,calc(100dvh - 490px))}
+#look:has(#tip[hidden]) #artic{--artic-h:max(160px,calc(100dvh - 450px))}
 #artic .artic-steps{gap:4px}
 #artic .artic-steps li{padding:5px 10px;font-size:.95rem}
 #artic .artic-steps li b{width:26px;height:26px}
 .duo{display:flex;align-items:center;justify-content:center;gap:10px}
-.duo .cta{padding:18px 22px;font-size:1.1rem}
+.duo .cta{padding:18px;font-size:1.1rem;white-space:nowrap}
 .mini{display:grid;justify-items:center;gap:3px;font-size:.8rem;font-weight:600}
 .mini span{width:56px;height:56px;border-radius:50%;background:#fff;color:var(--deep);display:grid;place-content:center;font-size:1.3rem}
 
